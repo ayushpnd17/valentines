@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lovely, Be Mine & My Valentine 💜</title>
+
+<style>
+* {
+  touch-action: manipulation;
+}
+
+/* 💜 HEART BALLOONS */
+#balloons{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+
+.balloon{
+  position:absolute;
+  bottom:-80px;
+  width:32px;
+  height:32px;
+  background:linear-gradient(135deg,#ec4899,#a78bfa);
+  transform:rotate(45deg);
+  animation:floatUp linear infinite;
+  opacity:.85;
+}
+
+.balloon::before,
+.balloon::after{
+  content:"";
+  position:absolute;
+  width:32px;
+  height:32px;
+  background:inherit;
+  border-radius:50%;
+}
+
+.balloon::before{
+  top:-16px;
+  left:0;
+}
+.balloon::after{
+  left:-16px;
+  top:0;
+}
+
+.balloon span{
+  position:absolute;
+  top:32px;
+  left:50%;
+  width:1px;
+  height:40px;
+  background:rgba(0,0,0,.2);
+}
+
+@keyframes floatUp{
+  from{transform:translateY(0) rotate(45deg)}
+  to{transform:translateY(-120vh) rotate(45deg)}
+}
+
+/* 🎨 SECTION COLORS */
+:root{
+  --heart1:#a78bfa;
+  --heart2:#f472b6;
+  --heart3:#fb7185;
+  --heart4:#fde68a;
+  --heart5:#22c55e;
+  --heart6:#ec4899;
+  --heart7:#c084fc;
+}
+
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:radial-gradient(circle at top,#f3e8ff,#c4b5fd,#5b21b6);
+  color:#2e1065;
+  text-align:center;
+  overflow-x:hidden;
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at center,rgba(255,255,255,0.08),transparent 70%);
+  pointer-events:none;
+  z-index:1;
+}
+section{
+  min-height:100vh;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  z-index:2;
+}
+#s1{display:flex}
+
+h1,h2{font-family:Georgia,serif;}
+.heart{
+  font-size:90px;
+  animation:beat 1s infinite;
+  filter:drop-shadow(0 0 20px #a78bfa);
+}
+@keyframes beat{50%{transform:scale(1.2)}}
+
+.btn{
+  background:linear-gradient(135deg,#8b5cf6,#ec4899);
+  color:#fff;
+  border:none;
+  padding:14px 26px;
+  border-radius:40px;
+  font-size:18px;
+  cursor:pointer;
+  margin:10px;
+  box-shadow:0 0 20px rgba(167,139,250,.6);
+  transition:all .4s ease;
+}
+.btn.yesMode{
+  background:linear-gradient(135deg,#22c55e,#ec4899);
+  transform:scale(1.15);
+  box-shadow:0 0 30px rgba(34,197,94,.7);
+}
+
+.card{
+  background:rgba(245,240,255,.95);
+  border-radius:26px;
+  padding:30px;
+  max-width:580px;
+  width:90%;
+  max-height:80vh;
+  overflow-y:auto;
+  box-shadow:
+    0 0 40px rgba(167,139,250,.45),
+    0 0 80px rgba(236,72,153,.15);
+}
+
+/* 📄 PDF MODE — allow full height */
+.pdf-mode .card{
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+
+/* FLIP GALLERY */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  perspective:1200px;
+}
+.flip{
+  position:relative;
+  width:100%;
+  height:260px;
+  transform-style:preserve-3d;
+  transition:transform .9s ease;
+}
+.flip.active{transform:rotateY(180deg)}
+.face{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.face img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  border-radius:18px;
+  box-shadow:0 0 20px rgba(167,139,250,.4);
+}
+.back{
+  transform:rotateY(180deg);
+  padding:18px;
+  font-family:Georgia,serif;
+  font-size:18px;
+  background:linear-gradient(135deg,#ede9fe,#fdf2f8);
+}
+
+/* TIMER */
+#timerBox{
+  display:none;
+  position:fixed;
+  top:16px;left:16px;
+  background:rgba(245,240,255,.95);
+  padding:12px 16px;
+  border-radius:20px;
+  z-index:50;
+  box-shadow:0 0 20px rgba(167,139,250,.5);
+}
+
+/* LETTER */
+#letter{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(20,10,40,.75);
+  align-items:center;
+  justify-content:center;
+  z-index:200;
+}
+
+/* REASONS */
+.reason{
+  font-family:Georgia,serif;
+  font-size:18px;
+  margin:14px 0;
+  opacity:0;
+  animation:fadeDrop .8s forwards, pulse 2s infinite;
+}
+@keyframes fadeDrop{
+  from{opacity:0;transform:translateY(-20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes pulse{50%{transform:scale(1.04)}}
+
+#noBtn{position:relative}
+#tease{
+  margin-top:12px;
+  font-size:16px;
+  color:#7c3aed;
+  font-family:Georgia,serif;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+#hearts{z-index:0}
+#fx{z-index:100;display:none}
+
+/* 🇮🇳 FULL-WIDTH NON-JUDICIAL STAMP */
+.stamp-img{
+  width:100%;
+  margin-bottom:18px;
+}
+
+.stamp-img img{
+  width:100%;          /* cover full breadth */
+  height:auto;         /* keep aspect ratio */
+  display:block;
+  border-radius:8px;
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));
+}
+
+
+/* ❤️ LOVE AGREEMENT ❤️ */
+.agreement{
+  background:linear-gradient(135deg,#fff1f2,#fdf2f8,#ede9fe);
+  border:4px double #e11d48;
+  border-radius:20px;
+  padding:26px;
+  font-family:Georgia,serif;
+  color:#7f1d1d;
+}
+.stamp{
+  background:#fde68a;
+  border-radius:14px;
+  padding:10px;
+  font-weight:bold;
+  margin-bottom:14px;
+}
+.agreement ul{
+  text-align:left;
+  padding-left:22px;
+}
+.agreement li{
+  margin:10px 0;
+}
+.seal{
+  margin:22px auto;
+  width:110px;
+  height:110px;
+  background:#dc2626;
+  border-radius:50%;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  box-shadow:0 0 20px rgba(220,38,38,.6);
+}
+.sign{
+  display:flex;
+  justify-content:space-between;
+  margin-top:20px;
+  font-weight:bold;
+}
+
+/* ✍️ SIGNATURE */
+.sign img{
+  width:220px;
+}
+#signCanvas{
+  position:relative;
+  width:240px;
+  height:180px;
+  border-bottom:2px solid #7fcfcfc;
+  pointer-events:auto;
+  background:transparent;
+  touch-action: none;
+
+}
+/* 📱 MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+
+  h1 { font-size: 26px; }
+  h2 { font-size: 22px; }
+
+  .heart {
+    font-size: 64px;
+  }
+
+  .btn {
+    font-size: 16px;
+    padding: 12px 20px;
+    border-radius: 30px;
+  }
+#clearSignBtn{
+  margin-top:8px;
+  padding:8px 14px;
+  font-size:14px;
+  border:none;
+  border-radius:20px;
+  background:#e5e7eb;
+  color:#374151;
+  cursor:pointer;
+}
+
+#clearSignBtn:hover{
+  background:#d1d5db;
+}
+
+  .card {
+    padding: 20px;
+    max-height: 85vh;
+  }
+
+  /* Gallery → single column */
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .flip {
+    height: 220px;
+  }
+
+  .back {
+    font-size: 16px;
+  }
+
+/* Timer stays top-left on mobile */
+#timerBox {
+  top: 12px;
+  left: 12px;
+  bottom: auto;
+  transform: none;
+  font-size: 13px;
+  padding: 10px 14px;
+
+  /* ✨ micro-polish */
+  border-radius:16px;
+  box-shadow:0 0 12px rgba(167,139,250,.4);
+}
+
+  /* Agreement layout stack */
+  .sign {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .sign img {
+    width: 180px;
+  }
+
+  #signCanvas {
+    width: 100%;
+    max-width: 260px;
+    height: 160px;
+  }
+
+  /* Letter readability */
+  #letter .card {
+    max-height: 90vh;
+    font-size: 16px;
+  }
+}
+/* 💓 TIMER HEARTBEAT PULSE */
+@keyframes heartBeat {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.08); }
+  40%  { transform: scale(1); }
+  60%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+#timerBox.pulse {
+  animation: heartBeat 1.6s infinite;
+}
+/* 📄 FORCE SINGLE-PAGE PDF */
+@media print {
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  section {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  * {
+    page-break-before: avoid !important;
+    page-break-after: avoid !important;
+  }
+}
+@media print {
+  section {
+    display: block !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding: 40px 20px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<audio id="song" src="satranga.mp3" preload="auto" loop></audio>
+
+<div id="startOverlay" style="position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#ddd6fe,#a78bfa)">
+  <div class="heart">💜</div>
+  <h1>Tap on it, Bebo 💖</h1>
+  <button class="btn" id="startBtn">Let’s Begin</button>
+</div>
+
+<div id="timerBox">
+  🕯️ Time since I fell for you<br>
+  <span id="timer"></span>
+</div>
+
+<!-- S1 -->
+<section id="s1">
+  <div>
+    <div class="heart">💜</div>
+    <h1>Happy Valentine’s Day, Bebo 💕</h1>
+    <button class="btn" onclick="go(2)">Please Enter</button>
+  </div>
+</section>
+
+<!-- S2 -->
+<section id="s2">
+  <div class="card">
+    <h2>Reasons I Love You</h2>
+    <div id="reasonsBox" style="text-align:left"></div>
+    <button class="btn" id="reasonsNext" style="display:none" onclick="go(3)">Show Us 😍</button>
+  </div>
+</section>
+
+<!-- S3 -->
+<section id="s3">
+  <div class="card">
+    <h2>Us Being Us 📸</h2>
+    <div class="gallery">
+      <div class="flip"><div class="face"><img src="IMG20251214215734.jpg"></div><div class="face back">This smile… my favorite place 💜</div></div>
+      <div class="flip"><div class="face"><img src="IMG20251121225011.jpg"></div><div class="face back">Every moment with you feels like home 🏡</div></div>
+      <div class="flip"><div class="face"><img src="IMG20251118065244.jpg"></div><div class="face back">Proof that happiness exists 😍</div></div>
+      <div class="flip"><div class="face"><img src="Snapchat-1743341402.jpg"></div><div class="face back">Us. Always. No matter what ❤️</div></div>
+    </div>
+    <button class="btn" onclick="go(4)">I Have A Question 😳</button>
+  </div>
+</section>
+
+<!-- S4 -->
+<section id="s4">
+  <div class="card">
+    <h2>Will you be my Valentine? 💖</h2>
+    <button class="btn" onclick="yes()">YES 😍</button>
+    <button class="btn" id="noBtn">No 🙄</button>
+    <div id="tease"></div>
+  </div>
+</section>
+
+<!-- S5 -->
+<section id="s5">
+  <div class="card">
+    <h2>She said 'Yes' 💜</h2>
+    <button class="btn" onclick="openLetter()">💌 A Letter For You</button>
+  </div>
+</section>
+
+<div id="letter">
+  <div class="card">
+    <h2>A Small Letter 💌</h2>
+    <p><b>
+      Bebo, 💜<br><br>
+Somehow, in a world that moves too fast, you became my pause. My safe place. My favorite thought at the end of every long day. You walked into my life so gently, and without realizing it, you taught my heart how to feel deeper, laugh louder, and love braver.<br><br>
+I don’t know how you do it—how your smile calms my chaos, how your presence feels like home even when nothing else does. You’ve seen me at my weakest and still chose to stay, to care, to love me in ways I never knew I needed.<br><br>
+If I ever forget to say it enough, know this: you are my comfort, my strength, my quiet happiness, and my loud joy. Loving you feels natural, like breathing, like something my soul has always known how to do.<br><br>
+No matter where life takes us, a part of me will always be holding your hand—grateful, in love, and endlessly thankful that I get you.
+Always yours. 💜<br><br>
+      — Ayush
+    </b></p>
+    <button class="btn" onclick="closeLetter(); go(6)">One Last Thing 💫</button>
+  </div>
+</div>
+
+<!-- S6 -->
+<section id="s6">
+  <div class="card">
+    <h2>One last thing left ✨</h2>
+    <p style="font-size:20px;font-family:Georgia,serif;">
+      This wasn’t just a website…<br><br>
+      It was my heart, written in code 💜<br><br>
+      You are my Present ❤️<br><br>
+      You are my Future ❤️❤️<br><br>
+      You are my Forever ❤️❤️❤️<br><br>
+      I LOVE YOU 💕
+    </p>
+    <div class="heart">💜</div>
+    <button class="btn" onclick="go(7)">Love Agreement 💍</button>
+  </div>
+</section>
+
+<!-- S7 -->
+<section id="s7">
+  <div class="card agreement" id="agreementPDF">
+    <div class="stamp-img">
+ 	 <img src="stamp-500.jpg" alt="₹500 Non-Judicial Stamp">
+    </div>
+
+    <h2>💖 Love Agreement 💖</h2>
+
+    <p><b>This Agreement is made on:</b> 12/05/2024</p>
+    <p><b>Between:</b> Ayush & Lovely</p>
+
+    <p>
+      The First Party and Second Party have decided to be together
+      for their entire lifetime with love, care, respect and
+      unconditional support.
+    </p>
+
+    <ul>
+      <li>❤️ To be romantic always</li>
+      <li>❤️ To make each other smile at least once a day</li>
+      <li>❤️ To love each other more every single day</li>
+      <li>❤️ To stay together in every ups & downs</li>
+      <li>❤️ To always listen and understand each other</li>
+      <li>❤️ To love, respect & treasure till death</li>
+      <li>❤️ To grow old together</li>
+    </ul>
+
+    <div class="seal">Sealed<br>With<br>Love</div>
+
+    <div class="sign">
+      <div>
+        Ayush 💕<br>
+        <img src="ayush-signature.png" alt="Ayush Signature">
+      </div>	
+
+      <div>
+	Lovely 💖<br> 
+        <canvas id="signCanvas"></canvas><br>
+        <button class="btn" id="signBtn">Sign Here 💜</button>
+	<button id="clearSignBtn">🧽 Clear Signature</button>
+
+      </div>
+    </div>
+
+    <p id="signedMsg" style="display:none;color:green;font-weight:bold;">
+      ✔ Agreement Signed With Love
+    </p>
+
+    <div class="heart">💜</div>
+  </div>
+</section>
+
+<div id="balloons"></div>
+<canvas id="fx"></canvas>
+
+<script>
+const startOverlay=document.getElementById("startOverlay");
+const song=document.getElementById("song");
+const timerBox=document.getElementById("timerBox");
+const timer=document.getElementById("timer");
+const reasonsBox=document.getElementById("reasonsBox");
+const reasonsNext=document.getElementById("reasonsNext");
+const noBtn=document.getElementById("noBtn");
+const tease=document.getElementById("tease");
+const letter=document.getElementById("letter");
+const startBtn=document.getElementById("startBtn"); 
+const balloonBox = document.getElementById("balloons");
+
+
+startBtn.onclick=()=>{
+  startOverlay.style.display="none";
+  song.play().catch(()=>{});
+  timerBox.style.display="block";
+
+  timerBox.classList.add("pulse"); // 💓 HEARTBEAT STARTS HERE
+};
+
+
+function go(n){
+  document.querySelectorAll("section").forEach(s=>s.style.display="none");
+  const sec = document.getElementById("s"+n);
+  sec.style.display="flex";
+
+  updateBalloonColor("s"+n); // 🎈 balloons
+
+  // 📱 hide timer on agreement
+  if(n === 7){
+    timerBox.style.display = "none";
+  } else {
+    timerBox.style.display = "block";
+  }
+
+  if(n===2) showReasons();
+  if(n===3) startAutoFlip();
+}
+
+
+/* TIMER */
+const startDate=new Date("2024-05-12T11:00:00");
+setInterval(()=>{
+  const d=new Date()-startDate;
+  timer.textContent=
+    Math.floor(d/86400000)+"d "+
+    Math.floor(d%86400000/3600000)+"h "+
+    Math.floor(d%3600000/60000)+"m";
+},1000);
+
+/* REASONS */
+const reasons=[
+  "You steal my fries 🍟",
+  "Your 5 minutes is never 5 minutes 😄",
+  "Your excuses are terrible but cute 💕",
+  "You’re hard to love — and worth it ❤️",
+  "I Love to be inside you..... in your mind Bebo ( Yes there too ) 💜"
+];
+function showReasons(){
+  reasonsBox.innerHTML="";
+  reasonsNext.style.display="none";
+  reasons.forEach((t,i)=>{
+    setTimeout(()=>{
+      const r=document.createElement("div");
+      r.className="reason";
+      r.textContent=t;
+      reasonsBox.appendChild(r);
+      if(i===reasons.length-1)
+        setTimeout(()=>reasonsNext.style.display="inline-block",600);
+    },i*800);
+  });
+}
+
+/* AUTO FLIP */
+let flipInterval;
+function startAutoFlip(){
+/* 📱 TAP TO FLIP (MOBILE) */
+document.querySelectorAll(".flip").forEach(card=>{
+  card.addEventListener("click",()=>{
+    card.classList.toggle("active");
+  });
+});
+
+  const flips=[...document.querySelectorAll(".flip")];
+  let i=0;
+  clearInterval(flipInterval);
+  flipInterval=setInterval(()=>{
+    flips.forEach(f=>f.classList.remove("active"));
+    flips[i%flips.length].classList.add("active");
+    i++;
+  },1800);
+}
+
+/* NO BUTTON */
+const messages=["Nice try 😜","Nopeee 😆","Almost 😉","You wish 😂","Say YES already 😍"];
+let jumpCount=0;
+function jumpNo(){
+  jumpCount++;
+  noBtn.style.transform=`translate(${Math.random()*200-100}px,${Math.random()*120-60}px)`;
+  tease.textContent=messages[jumpCount%messages.length];
+  if(jumpCount>=10){
+    noBtn.textContent="YES 😍";
+    noBtn.classList.add("yesMode");
+    noBtn.onmouseover=null;
+    noBtn.onclick=yes;
+    noBtn.style.transform="none";
+  }
+}
+noBtn.addEventListener("mouseenter", jumpNo); 
+noBtn.addEventListener("touchstart", jumpNo); 
+noBtn.addEventListener("click", jumpNo);     
+
+
+/* LETTER */
+function openLetter(){letter.style.display="flex"}
+function closeLetter(){letter.style.display="none"}
+
+/* FIREWORKS */
+let particles=[],fwRunning=false;
+const fx=document.getElementById("fx"),ctx=fx.getContext("2d");
+function resizeFX(){
+  fx.width=innerWidth;
+  fx.height=innerHeight;
+}
+resizeFX();
+window.addEventListener("resize",resizeFX);
+
+function yes(){
+  go(5);
+
+  // 💕 faster balloons after YES
+  balloonSpeed = 400;
+  startBalloons();
+
+  fx.style.display="block";
+  if(!fwRunning){
+    fwRunning=true;
+    setInterval(createFirework,900);
+    animateFW();
+  }
+}
+
+function createFirework(){
+  const x=Math.random()*innerWidth;
+  const y=Math.random()*innerHeight*0.45;
+  const colors=["#f472b6","#c084fc","#fb7185","#a78bfa","#fde68a"];
+  const c=colors[Math.floor(Math.random()*colors.length)];
+  for(let i=0;i<220;i++){
+    const a=Math.random()*Math.PI*2;
+    const s=Math.random()*6+3;
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:150,c});
+  }
+}
+function animateFW(){
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+  particles=particles.filter(p=>{
+    p.x+=p.vx;
+    p.y+=p.vy;
+    p.vy+=0.04;
+    p.vx*=0.985;
+    p.l--;
+    ctx.globalAlpha=p.l/150;
+    ctx.fillStyle=p.c;
+    ctx.fillRect(p.x,p.y,3.5,3.5);
+    return p.l>0;
+  });
+  ctx.globalAlpha=1;
+  requestAnimationFrame(animateFW);
+}
+
+/* ✍️ SIGNATURE */
+const signCanvas=document.getElementById("signCanvas");
+const sctx=signCanvas.getContext("2d");
+signCanvas.width=240;
+signCanvas.height=180;
+let drawing=false,locked=false;
+
+signCanvas.addEventListener("pointerdown",e=>{
+  if(locked) return;
+  const rect = signCanvas.getBoundingClientRect();
+  drawing=true;
+  sctx.beginPath();
+  sctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+});
+
+signCanvas.addEventListener("pointermove",e=>{
+  if(!drawing||locked) return;
+  const rect = signCanvas.getBoundingClientRect();
+  sctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+  sctx.strokeStyle="#7f1d1d";
+  sctx.lineWidth=2;
+  sctx.lineCap="round";
+  sctx.lineJoin="round";
+  sctx.stroke();
+});
+
+window.addEventListener("pointerup",()=>drawing=false);
+
+document.getElementById("signBtn").onclick=()=>{
+  locked=true;
+  document.getElementById("signedMsg").style.display="block";
+  downloadAgreementPDF();
+};
+document.getElementById("clearSignBtn").onclick = () => {
+  if (locked) return; // cannot clear after signing
+  sctx.clearRect(0, 0, signCanvas.width, signCanvas.height);
+};
+
+/* 📄 PDF DOWNLOAD */
+/* 📄 PDF DOWNLOAD */
+function downloadAgreementPDF() {
+  const agreement = document.getElementById("agreementPDF");
+
+  // unlock full S7 content
+  document.body.classList.add("pdf-mode");
+
+  setTimeout(() => {
+    html2canvas(agreement, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: "#ffffff"
+    }).then(canvas => {
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jspdf.jsPDF("p", "mm", "a4");
+
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+
+      const imgRatio  = canvas.width / canvas.height;
+      const pageRatio = pageW / pageH;
+
+      let w, h;
+      if (imgRatio > pageRatio) {
+        w = pageW;
+        h = pageW / imgRatio;
+      } else {
+        h = pageH;
+        w = pageH * imgRatio;
+      }
+
+      pdf.addImage(
+        imgData,
+        "PNG",
+        (pageW - w) / 2,
+        (pageH - h) / 2,
+        w,
+        h
+      );
+
+      pdf.save("Love_Agreement.pdf");
+
+      // restore UI
+      document.body.classList.remove("pdf-mode");
+    });
+  }, 200);
+}
+
+
+/* 🎈 BALLOON SYSTEM */
+let balloonSpeed = 900;
+let balloonInterval;
+let currentHeartColor = "#a78bfa";
+
+const sectionColors = {
+  s1: "var(--heart1)",
+  s2: "var(--heart2)",
+  s3: "var(--heart3)",
+  s4: "var(--heart4)",
+  s5: "var(--heart5)",
+  s6: "var(--heart6)",
+  s7: "var(--heart7)"
+};
+
+function startBalloons(){
+  clearInterval(balloonInterval);
+  balloonInterval = setInterval(createBalloon, balloonSpeed);
+}
+
+function createBalloon(){
+  const b = document.createElement("div");
+  b.className = "balloon";
+  b.style.background =
+    `linear-gradient(135deg, ${currentHeartColor}, #ffffffaa)`;
+
+  const string = document.createElement("span");
+  b.appendChild(string);
+
+  b.style.left = Math.random()*100 + "vw";
+  b.style.animationDuration = (6 + Math.random()*6) + "s";
+  b.style.opacity = 0.5 + Math.random()*0.5;
+  b.style.transform =
+    "scale("+(0.6 + Math.random()*0.8)+") rotate(45deg)";
+
+  balloonBox.appendChild(b);
+  setTimeout(()=>b.remove(),15000);
+}
+
+function updateBalloonColor(sectionId){
+  currentHeartColor = sectionColors[sectionId] || "#a78bfa";
+}
+
+startBalloons();
+
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</body>
+</html>
